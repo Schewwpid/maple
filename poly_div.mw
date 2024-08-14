@@ -1,0 +1,270 @@
+poly_div := proc(dividend, divisor)
+# 此为实现带余除法的maple脚本，输入两个多项式，分别指定为被除式和除式，输出商式和余式 
+# 作者：黄子华
+    local quotient, remainder, term_quotient, term_product:
+    local deg_dividend, deg_divisor, lead_coeff_dividend, lead_coeff_divisor:
+    local max_iterations, current_iteration:
+
+    # 初始化商和余数
+    quotient := 0:
+    remainder := dividend:
+
+    # 获取除数的次数和首项系数
+    deg_divisor := degree(divisor, x):
+    lead_coeff_divisor := coeff(divisor, x, deg_divisor):
+
+    # 设置最大循环次数避免死循环
+    max_iterations := degree(dividend, x):
+    current_iteration := 0:
+
+    # 主循环：只要余数的次数不小于除数的次数，并且未超过最大循环次数
+    while degree(remainder, x) >= deg_divisor and current_iteration < max_iterations do
+        # 获取余数的次数和首项系数
+        deg_dividend := degree(remainder, x);
+        lead_coeff_dividend := coeff(remainder, x, deg_dividend);
+
+        # 计算当前项的商
+        term_quotient := (lead_coeff_dividend / lead_coeff_divisor) * x^(deg_dividend - deg_divisor);
+
+        # 输出当前步骤，直接显示公式
+        print("Current remainder: ", remainder);
+        print("Leading term quotient: ", term_quotient);
+
+        # 更新商
+        quotient := quotient + term_quotient;
+
+        # 计算当前项的乘积
+        term_product := term_quotient * divisor;
+
+        # 更新余数
+        remainder := expand(remainder - term_product);
+
+        # 输出当前步骤，直接显示公式
+        print("Leading term product: ", term_product);
+        print("Updated remainder: ", remainder);
+        
+
+        # 增加当前迭代计数
+        current_iteration := current_iteration + 1;
+    end do;
+
+    # 输出最终的商和余数，直接显示公式
+    #print("Final quotient: ", quotient);
+    #print("Final remainder: ", remainder);
+    
+
+    # 返回最终的商和余数
+    return quotient, remainder;
+end proc:
+
+# 测试函数
+dividend := x^3 + 2*x^2 - 5*x + 3;
+divisor := x - 2;
+
+# 调用带余除法函数
+quotient, remainder := poly_div(dividend, divisor);
+print("--------------------------------------------------------------------------------------");
+
+# 再测试
+dividend1 := x^4 - 3*x^2 - 2*x - 1;
+divisor1 := x^2 - 2*x + 5;
+quotient, remainder := poly_div(dividend1, divisor1);
+print("--------------------------------------------------------------------------------------");
+
+dividend2 := x^4 + x^3 - 2*x + 3;
+divisor2 := 3*x^2 - x + 2;
+quotient, remainder := poly_div(dividend2, divisor2);
+print("--------------------------------------------------------------------------------------");
+
+# 测试如果除式的次数大于或等于被除式
+dividend3 := x^4 + x^3 - 2*x + 3;
+divisor3 := 3*x^5 - x + 2;
+quotient, remainder := poly_div(dividend3, divisor3);
+print("--------------------------------------------------------------------------------------");
+dividend4 := 5*x;
+divisor4 := 2*x;
+quotient, remainder := poly_div(dividend4, divisor4);
+                             3      2          
+                dividend := x  + 2 x  - 5 x + 3
+
+                        divisor := x - 2
+
+                                   3      2          
+           "Current remainder: ", x  + 2 x  - 5 x + 3
+
+                                             2
+                 "Leading term quotient: ", x 
+
+                                         2        
+              "Leading term product: ", x  (x - 2)
+
+                                       2          
+             "Updated remainder: ", 4 x  - 5 x + 3
+
+                                       2          
+             "Current remainder: ", 4 x  - 5 x + 3
+
+                 "Leading term quotient: ", 4 x
+
+             "Leading term product: ", 4 x (x - 2)
+
+                 "Updated remainder: ", 3 x + 3
+
+                 "Current remainder: ", 3 x + 3
+
+                  "Leading term quotient: ", 3
+
+               "Leading term product: ", 3 x - 6
+
+                    "Updated remainder: ", 9
+
+                                     2             
+             quotient, remainder := x  + 4 x + 3, 9
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                              4      2          
+                dividend1 := x  - 3 x  - 2 x - 1
+
+                                 2          
+                    divisor1 := x  - 2 x + 5
+
+                                   4      2          
+           "Current remainder: ", x  - 3 x  - 2 x - 1
+
+                                             2
+                 "Leading term quotient: ", x 
+
+                                     2 / 2          \
+          "Leading term product: ", x  \x  - 2 x + 5/
+
+                                    3      2          
+          "Updated remainder: ", 2 x  - 8 x  - 2 x - 1
+
+                                    3      2          
+          "Current remainder: ", 2 x  - 8 x  - 2 x - 1
+
+                 "Leading term quotient: ", 2 x
+
+                                        / 2          \
+          "Leading term product: ", 2 x \x  - 2 x + 5/
+
+                                       2           
+            "Updated remainder: ", -4 x  - 12 x - 1
+
+                                       2           
+            "Current remainder: ", -4 x  - 12 x - 1
+
+                 "Leading term quotient: ", -4
+
+                                         2           
+           "Leading term product: ", -4 x  + 8 x - 20
+
+               "Updated remainder: ", -20 x + 19
+
+                                2                      
+        quotient, remainder := x  + 2 x - 4, -20 x + 19
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                               4    3          
+                 dividend2 := x  + x  - 2 x + 3
+
+                                   2        
+                    divisor2 := 3 x  - x + 2
+
+                                    4    3          
+            "Current remainder: ", x  + x  - 2 x + 3
+
+                                           1  2
+                "Leading term quotient: ", - x 
+                                           3   
+
+                                   1  2 /   2        \
+         "Leading term product: ", - x  \3 x  - x + 2/
+                                   3                  
+
+                                 4  3             2  2
+          "Updated remainder: ", - x  - 2 x + 3 - - x 
+                                 3                3   
+
+                                 4  3             2  2
+          "Current remainder: ", - x  - 2 x + 3 - - x 
+                                 3                3   
+
+                                            4  
+                 "Leading term quotient: ", - x
+                                            9  
+
+                                    4   /   2        \
+          "Leading term product: ", - x \3 x  - x + 2/
+                                    9                 
+
+                                     26         2  2
+            "Updated remainder: ", - -- x + 3 - - x 
+                                     9          9   
+
+                                     26         2  2
+            "Current remainder: ", - -- x + 3 - - x 
+                                     9          9   
+
+                                            -2
+                 "Leading term quotient: ", --
+                                            27
+
+                                      2  2   2      4 
+          "Leading term product: ", - - x  + -- x - --
+                                      9      27     27
+
+                                        80     85
+               "Updated remainder: ", - -- x + --
+                                        27     27
+
+                             1  2   4     2     80     85
+      quotient, remainder := - x  + - x - --, - -- x + --
+                             3      9     27    27     27
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                               4    3          
+                 dividend3 := x  + x  - 2 x + 3
+
+                                   5        
+                    divisor3 := 3 x  - x + 2
+
+                                     4    3          
+          quotient, remainder := 0, x  + x  - 2 x + 3
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                        dividend4 := 5 x
+
+                        divisor4 := 2 x
+
+                   "Current remainder: ", 5 x
+
+                                             5
+                  "Leading term quotient: ", -
+                                             2
+
+                 "Leading term product: ", 5 x
+
+                    "Updated remainder: ", 0
+
+                                         5   
+                  quotient, remainder := -, 0
+                                         2   
+
+
