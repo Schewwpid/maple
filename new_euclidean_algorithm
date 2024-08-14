@@ -1,0 +1,808 @@
+# 读取 poly_div 函数定义
+read("D:\\mapleProjects\\poly_div.mpl");
+
+# 定义归一化函数，将多项式的首项系数调整为1
+normalize := proc(p)
+    local lead_coeff;
+    lead_coeff := coeff(p, x, degree(p, x));
+    return p / lead_coeff;
+end proc:
+
+# 定义辗转相除法的函数，计算两个多项式的最大公因式
+euclidean_algorithm := proc(poly1, poly2)
+    local quotient, remainder, result_gcd;
+
+    # 如果 poly1 的次数小于 poly2，则交换
+    if degree(poly1, x) < degree(poly2, x) then
+        remainder := poly1;
+        result_gcd := poly2;
+    else
+        remainder := poly2;
+        result_gcd := poly1;
+    end if;
+
+    # 主循环：只要余数不为零，就继续进行除法
+    while remainder <> 0 do
+        # 使用带余除法函数计算余数
+        quotient, remainder := poly_div(result_gcd, remainder);
+        print("---------------------------");
+
+        # 显示当前的中间结果
+        print("Quotient: ", quotient);
+        print("Remainder: ", remainder);
+
+        # 交换
+        if remainder <> 0 then
+            result_gcd := remainder;
+        end if;
+    end do:
+
+    # 归一化最大公因式
+    result_gcd := normalize(result_gcd);
+
+    # 返回最大公因式
+    return result_gcd;
+end proc:
+
+# 测试函数
+poly11 := x^3 + 2*x^2 - 5*x + 3;
+poly12 := x^2 - 1;
+
+# 调用辗转相除法函数
+gcd_result := euclidean_algorithm(poly11, poly12);
+
+# 输出结果
+printf("GCD of %a and %a is: %a\n", poly11, poly12, gcd_result);
+print("--------------------------------------------------------------------------------------");
+
+# 其他测试用例
+poly21 := x^4 - 3*x^2 - 2*x - 1;
+poly22 := x^2 - 2*x + 5;
+gcd_result := euclidean_algorithm(poly21, poly22);
+printf("GCD of %a and %a is: %a\n", poly21, poly22, gcd_result);
+print("--------------------------------------------------------------------------------------");
+
+poly31 := x^4 + x^3 - 2*x + 3;
+poly32 := 3*x^2 - x + 2;
+gcd_result := euclidean_algorithm(poly31, poly32);
+printf("GCD of %a and %a is: %a\n", poly31, poly32, gcd_result);
+print("--------------------------------------------------------------------------------------");
+
+poly41 := x^4 + x^3 - 2*x + 3;
+poly42 := 3*x^5 - x + 2;
+gcd_result := euclidean_algorithm(poly41, poly42);
+printf("GCD of %a and %a is: %a\n", poly41, poly42, gcd_result);
+print("--------------------------------------------------------------------------------------");
+
+poly51 := 5*x;
+poly52 := 2*x;
+gcd_result := euclidean_algorithm(poly51, poly52);
+printf("GCD of %a and %a is: %a\n", poly51, poly52, gcd_result);
+print("--------------------------------------------------------------------------------------");
+
+poly62 := x^4 + 3*x - 2;
+poly61 := 3*x^3 - x^2 - 7*x + 4;
+gcd_result := euclidean_algorithm(poly61, poly62);
+printf("GCD of %a and %a is: %a\n", poly61, poly62, gcd_result);
+print("--------------------------------------------------------------------------------------");
+
+poly71 := 3*x^3 + 3*x^2 - 21*x + 6;
+poly72 := 3*x^2 - 5*x - 2;
+gcd_result := euclidean_algorithm(poly71, poly72);
+printf("GCD of %a and %a is: %a\n", poly71, poly72, gcd_result);
+print("--------------------------------------------------------------------------------------");
+
+poly81 := 3*x^3 + 3*x^2 - 21*x + 6;
+poly82 := 3*x^2 - 5*x - 2;
+gcd_result := euclidean_algorithm(poly71, poly72);
+printf("GCD of %a and %a is: %a\n", poly71, poly72, gcd_result);
+
+
+                             3      2          
+                dividend := x  + 2 x  - 5 x + 3
+
+                        divisor := x - 2
+
+                                   3      2          
+           "Current remainder: ", x  + 2 x  - 5 x + 3
+
+                                             2
+                 "Leading term quotient: ", x 
+
+                                         2        
+              "Leading term product: ", x  (x - 2)
+
+                                       2          
+             "Updated remainder: ", 4 x  - 5 x + 3
+
+                                       2          
+             "Current remainder: ", 4 x  - 5 x + 3
+
+                 "Leading term quotient: ", 4 x
+
+             "Leading term product: ", 4 x (x - 2)
+
+                 "Updated remainder: ", 3 x + 3
+
+                 "Current remainder: ", 3 x + 3
+
+                  "Leading term quotient: ", 3
+
+               "Leading term product: ", 3 x - 6
+
+                    "Updated remainder: ", 9
+
+                                     2             
+             quotient, remainder := x  + 4 x + 3, 9
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                              4      2          
+                dividend1 := x  - 3 x  - 2 x - 1
+
+                                 2          
+                    divisor1 := x  - 2 x + 5
+
+                                   4      2          
+           "Current remainder: ", x  - 3 x  - 2 x - 1
+
+                                             2
+                 "Leading term quotient: ", x 
+
+                                     2 / 2          \
+          "Leading term product: ", x  \x  - 2 x + 5/
+
+                                    3      2          
+          "Updated remainder: ", 2 x  - 8 x  - 2 x - 1
+
+                                    3      2          
+          "Current remainder: ", 2 x  - 8 x  - 2 x - 1
+
+                 "Leading term quotient: ", 2 x
+
+                                        / 2          \
+          "Leading term product: ", 2 x \x  - 2 x + 5/
+
+                                       2           
+            "Updated remainder: ", -4 x  - 12 x - 1
+
+                                       2           
+            "Current remainder: ", -4 x  - 12 x - 1
+
+                 "Leading term quotient: ", -4
+
+                                         2           
+           "Leading term product: ", -4 x  + 8 x - 20
+
+               "Updated remainder: ", -20 x + 19
+
+                                2                      
+        quotient, remainder := x  + 2 x - 4, -20 x + 19
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                               4    3          
+                 dividend2 := x  + x  - 2 x + 3
+
+                                   2        
+                    divisor2 := 3 x  - x + 2
+
+                                    4    3          
+            "Current remainder: ", x  + x  - 2 x + 3
+
+                                           1  2
+                "Leading term quotient: ", - x 
+                                           3   
+
+                                   1  2 /   2        \
+         "Leading term product: ", - x  \3 x  - x + 2/
+                                   3                  
+
+                                 4  3             2  2
+          "Updated remainder: ", - x  - 2 x + 3 - - x 
+                                 3                3   
+
+                                 4  3             2  2
+          "Current remainder: ", - x  - 2 x + 3 - - x 
+                                 3                3   
+
+                                            4  
+                 "Leading term quotient: ", - x
+                                            9  
+
+                                    4   /   2        \
+          "Leading term product: ", - x \3 x  - x + 2/
+                                    9                 
+
+                                     26         2  2
+            "Updated remainder: ", - -- x + 3 - - x 
+                                     9          9   
+
+                                     26         2  2
+            "Current remainder: ", - -- x + 3 - - x 
+                                     9          9   
+
+                                            -2
+                 "Leading term quotient: ", --
+                                            27
+
+                                      2  2   2      4 
+          "Leading term product: ", - - x  + -- x - --
+                                      9      27     27
+
+                                        80     85
+               "Updated remainder: ", - -- x + --
+                                        27     27
+
+                             1  2   4     2     80     85
+      quotient, remainder := - x  + - x - --, - -- x + --
+                             3      9     27    27     27
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                               4    3          
+                 dividend3 := x  + x  - 2 x + 3
+
+                                   5        
+                    divisor3 := 3 x  - x + 2
+
+                                     4    3          
+          quotient, remainder := 0, x  + x  - 2 x + 3
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                        dividend4 := 5 x
+
+                        divisor4 := 2 x
+
+                   "Current remainder: ", 5 x
+
+                                             5
+                  "Leading term quotient: ", -
+                                             2
+
+                 "Leading term product: ", 5 x
+
+                    "Updated remainder: ", 0
+
+                                         5   
+                  quotient, remainder := -, 0
+                                         2   
+
+                            3      2          
+                 poly11 := x  + 2 x  - 5 x + 3
+
+                                   2    
+                        poly12 := x  - 1
+
+                                   3      2          
+           "Current remainder: ", x  + 2 x  - 5 x + 3
+
+                  "Leading term quotient: ", x
+
+                                          / 2    \
+              "Leading term product: ", x \x  - 1/
+
+                                       2          
+             "Updated remainder: ", 2 x  - 4 x + 3
+
+                                       2          
+             "Current remainder: ", 2 x  - 4 x + 3
+
+                  "Leading term quotient: ", 2
+
+                                            2    
+               "Leading term product: ", 2 x  - 2
+
+                "Updated remainder: ", -4 x + 5
+
+                 "---------------------------"
+
+                      "Quotient: ", x + 2
+
+                    "Remainder: ", -4 x + 5
+
+                "Current remainder: ", -4 x + 5
+
+                  "Leading term quotient: ", 1
+
+               "Leading term product: ", -4 x + 5
+
+                    "Updated remainder: ", 0
+
+                 "---------------------------"
+
+                        "Quotient: ", 1
+
+                        "Remainder: ", 0
+
+                                        5
+                      gcd_result := x - -
+                                        4
+
+GCD of x^3+2*x^2-5*x+3 and x^2-1 is: x-5/4
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                            4      2          
+                 poly21 := x  - 3 x  - 2 x - 1
+
+                                2          
+                     poly22 := x  - 2 x + 5
+
+                                   4      2          
+           "Current remainder: ", x  - 3 x  - 2 x - 1
+
+                                             2
+                 "Leading term quotient: ", x 
+
+                                     2 / 2          \
+          "Leading term product: ", x  \x  - 2 x + 5/
+
+                                    3      2          
+          "Updated remainder: ", 2 x  - 8 x  - 2 x - 1
+
+                                    3      2          
+          "Current remainder: ", 2 x  - 8 x  - 2 x - 1
+
+                 "Leading term quotient: ", 2 x
+
+                                        / 2          \
+          "Leading term product: ", 2 x \x  - 2 x + 5/
+
+                                       2           
+            "Updated remainder: ", -4 x  - 12 x - 1
+
+                                       2           
+            "Current remainder: ", -4 x  - 12 x - 1
+
+                 "Leading term quotient: ", -4
+
+                                         2           
+           "Leading term product: ", -4 x  + 8 x - 20
+
+               "Updated remainder: ", -20 x + 19
+
+                 "---------------------------"
+
+                                  2          
+                   "Quotient: ", x  + 2 x - 4
+
+                   "Remainder: ", -20 x + 19
+
+               "Current remainder: ", -20 x + 19
+
+                  "Leading term quotient: ", 1
+
+              "Leading term product: ", -20 x + 19
+
+                    "Updated remainder: ", 0
+
+                 "---------------------------"
+
+                        "Quotient: ", 1
+
+                        "Remainder: ", 0
+
+                                        19
+                      gcd_result := x - --
+                                        20
+
+GCD of x^4-3*x^2-2*x-1 and x^2-2*x+5 is: x-19/20
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                             4    3          
+                  poly31 := x  + x  - 2 x + 3
+
+                                  2        
+                     poly32 := 3 x  - x + 2
+
+                                    4    3          
+            "Current remainder: ", x  + x  - 2 x + 3
+
+                                           1  2
+                "Leading term quotient: ", - x 
+                                           3   
+
+                                   1  2 /   2        \
+         "Leading term product: ", - x  \3 x  - x + 2/
+                                   3                  
+
+                                 4  3             2  2
+          "Updated remainder: ", - x  - 2 x + 3 - - x 
+                                 3                3   
+
+                                 4  3             2  2
+          "Current remainder: ", - x  - 2 x + 3 - - x 
+                                 3                3   
+
+                                            4  
+                 "Leading term quotient: ", - x
+                                            9  
+
+                                    4   /   2        \
+          "Leading term product: ", - x \3 x  - x + 2/
+                                    9                 
+
+                                     26         2  2
+            "Updated remainder: ", - -- x + 3 - - x 
+                                     9          9   
+
+                                     26         2  2
+            "Current remainder: ", - -- x + 3 - - x 
+                                     9          9   
+
+                                            -2
+                 "Leading term quotient: ", --
+                                            27
+
+                                      2  2   2      4 
+          "Leading term product: ", - - x  + -- x - --
+                                      9      27     27
+
+                                        80     85
+               "Updated remainder: ", - -- x + --
+                                        27     27
+
+                 "---------------------------"
+
+                               1  2   4     2 
+                 "Quotient: ", - x  + - x - --
+                               3      9     27
+
+                                    80     85
+                   "Remainder: ", - -- x + --
+                                    27     27
+
+                                        80     85
+               "Current remainder: ", - -- x + --
+                                        27     27
+
+                  "Leading term quotient: ", 1
+
+                                         80     85
+             "Leading term product: ", - -- x + --
+                                         27     27
+
+                    "Updated remainder: ", 0
+
+                 "---------------------------"
+
+                        "Quotient: ", 1
+
+                        "Remainder: ", 0
+
+                                        17
+                      gcd_result := x - --
+                                        16
+
+GCD of x^4+x^3-2*x+3 and 3*x^2-x+2 is: x-17/16
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                             4    3          
+                  poly41 := x  + x  - 2 x + 3
+
+                                  5        
+                     poly42 := 3 x  - x + 2
+
+                                        5        
+              "Current remainder: ", 3 x  - x + 2
+
+                 "Leading term quotient: ", 3 x
+
+                                     / 4    3          \
+       "Leading term product: ", 3 x \x  + x  - 2 x + 3/
+
+                                    4      2           
+         "Updated remainder: ", -3 x  + 6 x  - 10 x + 2
+
+                                    4      2           
+         "Current remainder: ", -3 x  + 6 x  - 10 x + 2
+
+                 "Leading term quotient: ", -3
+
+                                      4      3          
+        "Leading term product: ", -3 x  - 3 x  + 6 x - 9
+
+                                   3      2            
+         "Updated remainder: ", 3 x  + 6 x  - 16 x + 11
+
+                 "---------------------------"
+
+                     "Quotient: ", 3 x - 3
+
+                               3      2            
+             "Remainder: ", 3 x  + 6 x  - 16 x + 11
+
+                                   3      2            
+         "Current remainder: ", 3 x  + 6 x  - 16 x + 11
+
+                  "Leading term quotient: ", 1
+
+                                    3      2            
+       "Leading term product: ", 3 x  + 6 x  - 16 x + 11
+
+                    "Updated remainder: ", 0
+
+                 "---------------------------"
+
+                        "Quotient: ", 1
+
+                        "Remainder: ", 0
+
+                             3      2   16     11
+              gcd_result := x  + 2 x  - -- x + --
+                                        3      3 
+
+GCD of x^4+x^3-2*x+3 and 3*x^5-x+2 is: x^3+2*x^2-16/3*x+11/3
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                         poly51 := 5 x
+
+                         poly52 := 2 x
+
+                   "Current remainder: ", 5 x
+
+                                             5
+                  "Leading term quotient: ", -
+                                             2
+
+                 "Leading term product: ", 5 x
+
+                    "Updated remainder: ", 0
+
+                 "---------------------------"
+
+                                      5
+                        "Quotient: ", -
+                                      2
+
+                        "Remainder: ", 0
+
+                        gcd_result := x
+
+GCD of 5*x and 2*x is: x
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                                4          
+                     poly62 := x  + 3 x - 2
+
+                              3    2          
+                 poly61 := 3 x  - x  - 7 x + 4
+
+                                      4          
+              "Current remainder: ", x  + 3 x - 2
+
+                                            1  
+                 "Leading term quotient: ", - x
+                                            3  
+
+                                1   /   3    2          \
+      "Leading term product: ", - x \3 x  - x  - 7 x + 4/
+                                3                        
+
+                                 5         1  3   7  2
+          "Updated remainder: ", - x - 2 + - x  + - x 
+                                 3         3      3   
+
+                                 5         1  3   7  2
+          "Current remainder: ", - x - 2 + - x  + - x 
+                                 3         3      3   
+
+                                             1
+                  "Leading term quotient: ", -
+                                             9
+
+                                  1  3   1  2   7     4
+        "Leading term product: ", - x  - - x  - - x + -
+                                  3      9      9     9
+
+                                   22     22   22  2
+            "Updated remainder: ", -- x - -- + -- x 
+                                   9      9    9    
+
+                 "---------------------------"
+
+                                   1     1
+                     "Quotient: ", - x + -
+                                   3     9
+
+                               22     22   22  2
+                "Remainder: ", -- x - -- + -- x 
+                               9      9    9    
+
+                                   22     22   22  2
+            "Current remainder: ", -- x - -- + -- x 
+                                   9      9    9    
+
+                  "Leading term quotient: ", 1
+
+                                    22     22   22  2
+          "Leading term product: ", -- x - -- + -- x 
+                                    9      9    9    
+
+                    "Updated remainder: ", 0
+
+                 "---------------------------"
+
+                        "Quotient: ", 1
+
+                        "Remainder: ", 0
+
+                                   2        
+                    gcd_result := x  + x - 1
+
+GCD of 3*x^3-x^2-7*x+4 and x^4+3*x-2 is: x^2+x-1
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                             3      2           
+                poly71 := 3 x  + 3 x  - 21 x + 6
+
+                                 2          
+                    poly72 := 3 x  - 5 x - 2
+
+                                   3      2           
+         "Current remainder: ", 3 x  + 3 x  - 21 x + 6
+
+                  "Leading term quotient: ", x
+
+                                      /   2          \
+          "Leading term product: ", x \3 x  - 5 x - 2/
+
+                                       2           
+             "Updated remainder: ", 8 x  - 19 x + 6
+
+                                       2           
+             "Current remainder: ", 8 x  - 19 x + 6
+
+                                             8
+                  "Leading term quotient: ", -
+                                             3
+
+                                        2   40     16
+           "Leading term product: ", 8 x  - -- x - --
+                                            3      3 
+
+                                        17     34
+               "Updated remainder: ", - -- x + --
+                                        3      3 
+
+                 "---------------------------"
+
+                                        8
+                      "Quotient: ", x + -
+                                        3
+
+                                    17     34
+                   "Remainder: ", - -- x + --
+                                    3      3 
+
+                                        17     34
+               "Current remainder: ", - -- x + --
+                                        3      3 
+
+                  "Leading term quotient: ", 1
+
+                                         17     34
+             "Leading term product: ", - -- x + --
+                                         3      3 
+
+                    "Updated remainder: ", 0
+
+                 "---------------------------"
+
+                        "Quotient: ", 1
+
+                        "Remainder: ", 0
+
+                      gcd_result := x - 2
+
+GCD of 3*x^3+3*x^2-21*x+6 and 3*x^2-5*x-2 is: x-2
+
+"---------------------------------------------------------------\
+
+  -----------------------"
+
+
+                             3      2           
+                poly81 := 3 x  + 3 x  - 21 x + 6
+
+                                 2          
+                    poly82 := 3 x  - 5 x - 2
+
+                                   3      2           
+         "Current remainder: ", 3 x  + 3 x  - 21 x + 6
+
+                  "Leading term quotient: ", x
+
+                                      /   2          \
+          "Leading term product: ", x \3 x  - 5 x - 2/
+
+                                       2           
+             "Updated remainder: ", 8 x  - 19 x + 6
+
+                                       2           
+             "Current remainder: ", 8 x  - 19 x + 6
+
+                                             8
+                  "Leading term quotient: ", -
+                                             3
+
+                                        2   40     16
+           "Leading term product: ", 8 x  - -- x - --
+                                            3      3 
+
+                                        17     34
+               "Updated remainder: ", - -- x + --
+                                        3      3 
+
+                 "---------------------------"
+
+                                        8
+                      "Quotient: ", x + -
+                                        3
+
+                                    17     34
+                   "Remainder: ", - -- x + --
+                                    3      3 
+
+                                        17     34
+               "Current remainder: ", - -- x + --
+                                        3      3 
+
+                  "Leading term quotient: ", 1
+
+                                         17     34
+             "Leading term product: ", - -- x + --
+                                         3      3 
+
+                    "Updated remainder: ", 0
+
+                 "---------------------------"
+
+                        "Quotient: ", 1
+
+                        "Remainder: ", 0
+
+                      gcd_result := x - 2
+
+GCD of 3*x^3+3*x^2-21*x+6 and 3*x^2-5*x-2 is: x-2
+
+       
+
+
